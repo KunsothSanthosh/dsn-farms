@@ -1,48 +1,37 @@
 ﻿using System;
-using System.Globalization;
 
-class Program
+public class Program
 {
     static void Main()
     {
         Console.WriteLine("🌾 Welcome to DSN Farms");
 
-        Console.Write("Enter Product Name: ");
-        string productName = Console.ReadLine()?.Trim() ?? string.Empty;
-        if (string.IsNullOrWhiteSpace(productName))
-        {
-            productName = "Unknown Product";
-        }
+        Product product = GetProductInput();
 
-        double pricePerKg = ReadDouble("Enter Price per Kg: ");
-        double quantity = ReadDouble("Enter Quantity (Kg): ");
+        double finalAmount = product.CalculateFinalAmount();
 
-        double total = pricePerKg * quantity;
-        if (total > 500)
-        {
-            total -= total * 0.1; // Apply 10% discount
-        }
-
-        double gst = total * 0.05;
-        double finalAmount = total + gst;
-
-        Console.WriteLine("\n🧾 Bill Summary:");
-        Console.WriteLine($"Product: {productName}");
-        Console.WriteLine($"Total Price: ₹{finalAmount:F2}");
+        PrintBill(product, finalAmount);
     }
 
-    private static double ReadDouble(string prompt)
+    static Product GetProductInput()
     {
-        while (true)
-        {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
-            if (double.TryParse(input, NumberStyles.Number, CultureInfo.CurrentCulture, out double result))
-            {
-                return result;
-            }
+        Console.Write("Enter Product Name: ");
+        string name = Console.ReadLine() ?? string.Empty;
 
-            Console.WriteLine("Invalid number. Please enter a valid numeric value.");
-        }
+        Console.Write("Enter Price per Kg: ");
+        double price = Convert.ToDouble(Console.ReadLine() ?? "0");
+
+        Console.Write("Enter Quantity (Kg): ");
+        double quantity = Convert.ToDouble(Console.ReadLine() ?? "0");
+
+        return new Product(name, price, quantity);
+    }
+
+    static void PrintBill(Product product, double total)
+    {
+        Console.WriteLine("\n🧾 Bill Summary:");
+        Console.WriteLine($"Product: {product.Name}");
+        Console.WriteLine($"Quantity: {product.Quantity} Kg");
+        Console.WriteLine($"Final Price (incl. GST): ₹{total}");
     }
 }
