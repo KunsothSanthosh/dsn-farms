@@ -1,85 +1,81 @@
 ﻿using System;
 
-public class Program
+namespace DsnFarms
 {
-    static void Main()
+    class Program
     {
-        Console.WriteLine("🌾 Welcome to DSN Farms");
-
-        List<Product> products = new List<Product>();
-        bool running = true;
-
-        while (running)
+        static void Main()
         {
-            Console.WriteLine("\nMenu:");
-            Console.WriteLine("1. Add Product");
-            Console.WriteLine("2. View Bill");
-            Console.WriteLine("3. Exit");
-            Console.Write("Choose an option: ");
-            string choice = Console.ReadLine();
-
-            switch (choice)
+            // Create Seller
+            Seller seller = new Seller
             {
-                case "1":
-                    Product p = GetProductInput();
-                    products.Add(p);
-                    Console.WriteLine("Product added successfully!");
-                    break;
-                case "2":
-                    PrintBill(products);
-                    break;
-                case "3":
-                    running = false;
-                    Console.WriteLine("Exiting...");
-                    break;
-                default:
-                    Console.WriteLine("Invalid option. Please try again.");
-                    break;
+                Name = "Ramesh",
+                Location = "Andhra Pradesh"
+            };
+
+            // Create Hens Product
+            Product hens = new Product
+            {
+                Name = "Hens"
+            };
+
+            hens.Variants.Add(new ProductVariant
+            {
+                VariantName = "Broiler",
+                Price = 200,
+                Quantity = 50
+            });
+
+            hens.Variants.Add(new ProductVariant
+            {
+                VariantName = "Country Chicken",
+                Price = 350,
+                Quantity = 30
+            });
+
+            // Create Vegetables Product
+            Product vegetables = new Product
+            {
+                Name = "Vegetables"
+            };
+
+            vegetables.Variants.Add(new ProductVariant
+            {
+                VariantName = "Tomato",
+                Price = 20,
+                Quantity = 100
+            });
+
+            vegetables.Variants.Add(new ProductVariant
+            {
+                VariantName = "Potato",
+                Price = 25,
+                Quantity = 80
+            });
+
+            // Add products to seller
+            seller.Products.Add(hens);
+            seller.Products.Add(vegetables);
+
+            // Print Output
+            PrintSellerData(seller);
+        }
+
+        static void PrintSellerData(Seller seller)
+        {
+            Console.WriteLine($"Seller: {seller.Name}\n");
+
+            foreach (var product in seller.Products)
+            {
+                Console.WriteLine($"Product: {product.Name}");
+
+                foreach (var variant in product.Variants)
+                {
+                    Console.WriteLine($" - {variant.VariantName} → ₹{variant.Price} ({variant.Quantity} qty)");
+                }
+
+                Console.WriteLine();
             }
         }
-    }
-
-    static Product GetProductInput()
-    {
-        Console.Write("Enter Product Name: ");
-        string name = Console.ReadLine() ?? string.Empty;
-
-        double price = ReadDouble("Enter Price per Kg: ");
-        double quantity = ReadDouble("Enter Quantity (Kg): ");
-
-        return new Product(name, price, quantity);
-    }
-
-    static double ReadDouble(string prompt)
-    {
-        while (true)
-        {
-            Console.Write(prompt);
-            string? input = Console.ReadLine();
-            if (double.TryParse(input, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.CurrentCulture, out double result))
-            {
-                return result;
-            }
-            Console.WriteLine("Invalid number. Please enter a valid numeric value.");
-        }
-    }
-
-    static void PrintBill(List<Product> products)
-    {
-        if (products.Count == 0)
-        {
-            Console.WriteLine("No products added yet.");
-            return;
-        }
-
-        Console.WriteLine("\n🧾 Bill Summary:");
-        double grandTotal = 0;
-        foreach (var product in products)
-        {
-            double finalAmount = product.CalculateFinalAmount();
-            grandTotal += finalAmount;
-            Console.WriteLine($"Product: {product.Name}, Quantity: {product.Quantity} Kg, Final Price (incl. GST): ₹{finalAmount:F2}");
-        }
-        Console.WriteLine($"Grand Total: ₹{grandTotal:F2}");
     }
 }
